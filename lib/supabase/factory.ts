@@ -1,12 +1,12 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/supabase/database.types';
 import { supabaseEnv } from '@/lib/supabase/env';
 
 export type SchemaName = keyof Database;
 
-const buildClient = (key: string, schema: SchemaName): SupabaseClient<Database> =>
+const buildClient = (key: string, schema: SchemaName) =>
   createClient<Database>(supabaseEnv.url, key, {
-    db: { schema },
+    db: { schema: schema as unknown as 'public' },
     auth: {
       autoRefreshToken: true,
       persistSession: true,

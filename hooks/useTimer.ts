@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useStudentStore, generateId } from "@/lib/store";
 import type { SessionType } from "@/types";
 
@@ -12,11 +12,15 @@ const DEFAULT_DURATIONS: Record<SessionType, number> = {
 
 export function useTimer() {
     const { timerSettings, addFocusSession } = useStudentStore();
-    const durations: Record<SessionType, number> = {
+    const durations = useMemo<Record<SessionType, number>>(() => ({
         focus: timerSettings.focusDuration * 60,
         shortBreak: timerSettings.shortBreakDuration * 60,
         longBreak: timerSettings.longBreakDuration * 60,
-    };
+    }), [
+        timerSettings.focusDuration,
+        timerSettings.shortBreakDuration,
+        timerSettings.longBreakDuration,
+    ]);
 
     const [sessionType, setSessionType] = useState<SessionType>("focus");
     const [timeRemaining, setTimeRemaining] = useState(durations.focus);
