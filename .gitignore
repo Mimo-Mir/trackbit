@@ -26,11 +26,19 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
+.env.production
 .env*.local
 
 # vercel
 .vercel
 
+# netlify
+.netlify
+deno.lock
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel

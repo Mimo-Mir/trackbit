@@ -11,6 +11,24 @@ type FieldErrors = {
   confirmPassword?: string;
 };
 
+const normalizeAuthError = (message: string) => {
+  const lower = message.toLowerCase();
+
+  if (lower.includes('user already registered') || lower.includes('already exists')) {
+    return 'AN ACCOUNT WITH THIS EMAIL ALREADY EXISTS';
+  }
+
+  if (lower.includes('password should be at least')) {
+    return 'PASSWORD DOES NOT MEET MINIMUM REQUIREMENTS';
+  }
+
+  if (lower.includes('too many requests')) {
+    return 'TOO MANY ATTEMPTS. TRY AGAIN LATER';
+  }
+
+  return 'SIGNUP FAILED. PLEASE TRY AGAIN';
+};
+
 export default function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -71,7 +89,7 @@ export default function SignupPage() {
       });
 
       if (error) {
-        setFormError(error.message.toUpperCase());
+        setFormError(normalizeAuthError(error.message));
         return;
       }
 

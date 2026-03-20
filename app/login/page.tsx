@@ -10,6 +10,24 @@ type FieldErrors = {
   password?: string;
 };
 
+const normalizeAuthError = (message: string) => {
+  const lower = message.toLowerCase();
+
+  if (lower.includes('invalid login credentials')) {
+    return 'INVALID EMAIL OR PASSWORD';
+  }
+
+  if (lower.includes('email not confirmed')) {
+    return 'PLEASE CONFIRM YOUR EMAIL BEFORE LOGGING IN';
+  }
+
+  if (lower.includes('too many requests')) {
+    return 'TOO MANY ATTEMPTS. TRY AGAIN LATER';
+  }
+
+  return 'LOGIN FAILED. PLEASE TRY AGAIN';
+};
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -56,7 +74,7 @@ export default function LoginPage() {
       });
 
       if (error) {
-        setFormError(error.message.toUpperCase());
+        setFormError(normalizeAuthError(error.message));
         return;
       }
 
@@ -81,7 +99,7 @@ export default function LoginPage() {
       });
 
       if (error) {
-        setFormError(error.message.toUpperCase());
+        setFormError(normalizeAuthError(error.message));
       }
     } finally {
       setIsGoogleLoading(false);

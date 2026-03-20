@@ -397,6 +397,10 @@ begin
 end;
 $$;
 
+revoke all on function trackbit.run_retention_cleanup() from public, anon, authenticated;
+grant execute on function trackbit.run_retention_cleanup() to service_role;
+grant execute on function trackbit.run_retention_cleanup() to postgres;
+
 do $$
 begin
   if exists (select 1 from cron.job where jobname = 'trackbit_retention_cleanup') then
