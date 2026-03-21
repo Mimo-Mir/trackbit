@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -30,12 +31,35 @@ const normalizeAuthError = (message: string) => {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  const callbackError = (() => {
+    const error = searchParams.get('error');
+    const 
+  reason = searchParams.get('reason');
+
+    const suffix = reason ? `: ${reason}` : '';
+
+    if (error === 'missing_auth_code') {
+      return `GOOGLE LOGIN FAILED: MISSING AUTH CODE${suffix}`;
+    }
+
+    if (error === 'auth_callback_failed') {
+      return `GOOGLE LOGIN FAILED: AUTH CALLBACK ERROR${suffix}`;
+    }
+
+    if (error === 'oauth_provider_error') {
+      return `GOOGLE LOGIN FAILED: PROVIDER ERROR${suffix}`;
+    }
+
+    return null;
+  })();
 
   const validate = () => {
     const nextErrors: FieldErrors = {};
@@ -133,9 +157,9 @@ export default function LoginPage() {
 
         <h1 className="mb-6 font-display text-sm leading-relaxed text-text-primary sm:text-base">WELCOME BACK, PLAYER</h1>
 
-        {formError ? (
+        {formError || callbackError ? (
           <div className="mb-5 border-2 border-danger-500 bg-danger-900/60 px-3 py-2 text-2xs text-danger-400">
-            {formError}
+            {formError ?? callbackError}
           </div>
         ) : null}
 
