@@ -57,10 +57,10 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className="p-6 space-y-6 max-w-screen-2xl mx-auto animate-fade-in bg-surface-900 min-h-screen">
+        <div className="p-3 sm:p-6 space-y-6 max-w-screen-2xl mx-auto animate-fade-in bg-surface-900 min-h-screen">
             {/* Top Banner & Title */}
             <div className="space-y-4">
-                <div className="w-full h-48 rounded-[2px] border-2 border-surface-400/40 relative overflow-hidden flex items-end">
+                <div className="w-full h-36 sm:h-48 rounded-[2px] border-2 border-surface-400/40 relative overflow-hidden flex items-end">
                     <Image src="/banner.gif" alt="Banner" fill className="object-cover" unoptimized />
                 </div>
                 <div className="flex items-center gap-3">
@@ -91,7 +91,7 @@ export default function DashboardPage() {
                             <h2 className="text-sm font-bold uppercase tracking-wider text-brand-400 ml-1">Classes</h2>
                             <Link href="/courses" className="text-xs text-text-muted/60 hover:text-brand-400 transition-none">View All →</Link>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {courses.map(course => (
                                 <Card key={course.id} className="p-3 bg-surface-800 hover:border-brand-500/20 transition-none">
                                     <div className="flex items-center gap-2 mb-2">
@@ -156,7 +156,7 @@ export default function DashboardPage() {
                             <h2 className="text-sm font-bold uppercase tracking-wider text-brand-400 ml-1">Upcoming Assessments</h2>
                             <Link href="/assessments" className="text-xs text-text-muted/60 hover:text-brand-400 transition-none">View All →</Link>
                         </div>
-                        <div className="grid grid-cols-4 gap-3 mb-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
                             {assessments.filter(a => a.type === 'Exam').slice(0, 4).map(exam => {
                                 const course = courses.find(c => c.id === exam.course_id);
                                 return (
@@ -172,7 +172,7 @@ export default function DashboardPage() {
                                 );
                             })}
                         </div>
-                        <Card className="bg-surface-800 overflow-hidden">
+                        <Card className="bg-surface-800 overflow-x-auto">
                             <div className="grid grid-cols-12 gap-2 p-3 border-b-2 border-surface-400/30 text-xs font-bold text-text-muted/70">
                                 <div className="col-span-2">Deadline</div>
                                 <div className="col-span-4">Name</div>
@@ -207,7 +207,7 @@ export default function DashboardPage() {
                             <h2 className="text-sm font-bold uppercase tracking-wider text-brand-400 ml-1">Tasks</h2>
                             <Link href="/tasks" className="text-xs text-text-muted/60 hover:text-brand-400 transition-none">View All →</Link>
                         </div>
-                        <Card className="bg-surface-800 overflow-hidden">
+                        <Card className="bg-surface-800 overflow-x-auto">
                             <div className="grid grid-cols-12 gap-4 p-3 border-b-2 border-surface-400/30 text-xs font-bold text-text-muted/70">
                                 <div className="col-span-4">Name</div>
                                 <div className="col-span-2">Date</div>

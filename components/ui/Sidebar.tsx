@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
     PlusCircle, BookOpen, Calendar, CheckSquare, FileText, Clock, Folder,
-    Table, Layers, Briefcase, GraduationCap, Wallet, Target, BookMarked
+    Table, Layers, Briefcase, GraduationCap, Wallet, Target, BookMarked, X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -51,28 +51,46 @@ const NAV_GROUPS = [
     }
 ];
 
-export default function Sidebar() {
+type SidebarProps = {
+    mobileOpen?: boolean;
+    onClose?: () => void;
+};
+
+export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
     const pathname = usePathname();
-    return (
-        <aside className="w-64 shrink-0 h-full flex flex-col bg-surface-900 border-r-2 border-surface-400/40">
+
+    const renderNavContent = () => (
+        <>
             <div className="px-5 py-6 bg-surface-900 border-b-2 border-surface-400/40 shrink-0">
-                <Link href="/dashboard" className="flex items-center gap-2.5 group">
-                    <div className="w-8 h-8 rounded-[2px] bg-brand-600 flex items-center justify-center shadow-glow shrink-0">
-                        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="6" y="0" width="4" height="2" fill="white"/>
-                            <rect x="2" y="2" width="2" height="2" fill="white"/>
-                            <rect x="12" y="2" width="2" height="2" fill="white"/>
-                            <rect x="0" y="6" width="2" height="4" fill="white"/>
-                            <rect x="14" y="6" width="2" height="4" fill="white"/>
-                            <rect x="6" y="14" width="4" height="2" fill="white"/>
-                            <rect x="2" y="12" width="2" height="2" fill="white"/>
-                            <rect x="12" y="12" width="2" height="2" fill="white"/>
-                            <rect x="6" y="6" width="4" height="4" fill="#39ff14"/>
-                        </svg>
-                    </div>
-                    <span className="font-display font-bold text-sm text-text-primary">Track<span className="text-brand-400">Bit</span></span>
-                </Link>
+                <div className="flex items-center justify-between md:justify-start">
+                    <Link href="/dashboard" className="flex items-center gap-2.5 group" onClick={onClose}>
+                        <div className="w-8 h-8 rounded-[2px] bg-brand-600 flex items-center justify-center shadow-glow shrink-0">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="6" y="0" width="4" height="2" fill="white"/>
+                                <rect x="2" y="2" width="2" height="2" fill="white"/>
+                                <rect x="12" y="2" width="2" height="2" fill="white"/>
+                                <rect x="0" y="6" width="2" height="4" fill="white"/>
+                                <rect x="14" y="6" width="2" height="4" fill="white"/>
+                                <rect x="6" y="14" width="4" height="2" fill="white"/>
+                                <rect x="2" y="12" width="2" height="2" fill="white"/>
+                                <rect x="12" y="12" width="2" height="2" fill="white"/>
+                                <rect x="6" y="6" width="4" height="4" fill="#39ff14"/>
+                            </svg>
+                        </div>
+                        <span className="font-display font-bold text-sm text-text-primary">Track<span className="text-brand-400">Bit</span></span>
+                    </Link>
+
+                    <button
+                        aria-label="Close menu"
+                        className="md:hidden p-2 rounded-[2px] text-text-muted/80 hover:text-text-primary hover:bg-surface-700"
+                        onClick={onClose}
+                        type="button"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                </div>
             </div>
+
             <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
                 {NAV_GROUPS.map((group) => (
                     <div key={group.title}>
@@ -82,9 +100,17 @@ export default function Sidebar() {
                                 const basePath = href.split('?')[0];
                                 const isActive = basePath !== "#" && (pathname === basePath || pathname.startsWith(basePath + "/"));
                                 return (
-                                    <Link key={label} href={href}
-                                        className={cn("flex items-center gap-3 px-3 py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-none group",
-                                            isActive ? "bg-brand-600/20 text-brand-400 border-2 border-brand-500/30" : "text-text-muted/80 hover:text-text-primary hover:bg-surface-700 border-2 border-transparent")}>
+                                    <Link
+                                        key={label}
+                                        href={href}
+                                        onClick={onClose}
+                                        className={cn(
+                                            "flex items-center gap-3 px-3 py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-none group",
+                                            isActive
+                                                ? "bg-brand-600/20 text-brand-400 border-2 border-brand-500/30"
+                                                : "text-text-muted/80 hover:text-text-primary hover:bg-surface-700 border-2 border-transparent"
+                                        )}
+                                    >
                                         <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-brand-400" : "text-brand-500 group-hover:text-brand-400")} />
                                         <span className="flex-1 truncate">{label}</span>
                                     </Link>
@@ -94,6 +120,34 @@ export default function Sidebar() {
                     </div>
                 ))}
             </nav>
-        </aside>
+        </>
+    );
+
+    return (
+        <>
+            {/* Mobile backdrop */}
+            <div
+                className={cn(
+                    "fixed inset-0 z-40 bg-black/60 transition-opacity md:hidden",
+                    mobileOpen ? "opacity-100" : "pointer-events-none opacity-0"
+                )}
+                onClick={onClose}
+            />
+
+            {/* Mobile drawer */}
+            <aside
+                className={cn(
+                    "fixed inset-y-0 left-0 z-50 w-[18rem] max-w-[88vw] flex flex-col bg-surface-900 border-r-2 border-surface-400/40 transition-transform md:hidden",
+                    mobileOpen ? "translate-x-0" : "-translate-x-full"
+                )}
+            >
+                {renderNavContent()}
+            </aside>
+
+            {/* Desktop sidebar */}
+            <aside className="hidden md:flex w-64 shrink-0 h-full flex-col bg-surface-900 border-r-2 border-surface-400/40">
+                {renderNavContent()}
+            </aside>
+        </>
     );
 }
