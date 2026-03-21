@@ -80,6 +80,11 @@ Required GitHub secrets:
 - SUPABASE_URL
 - SUPABASE_ANON_KEY
 
+Accepted fallback names (workflow supports either set):
+
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+
 ## Retention rules implemented
 
 - Focus sessions older than 6 months: deleted by pg_cron
