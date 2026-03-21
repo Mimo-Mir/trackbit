@@ -15,14 +15,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <header className="shrink-0 h-14 px-3 sm:px-6 flex items-center justify-between border-b-2 border-surface-400/40 bg-surface-900">
                     <button
                         aria-label="Open menu"
-                        className="md:hidden p-2 rounded-[2px] text-text-muted/80 hover:text-text-primary hover:bg-surface-700 transition-none"
+                        className="lg:hidden p-2 rounded-[2px] text-text-muted/80 hover:text-text-primary hover:bg-surface-700 transition-none"
                         onClick={() => setMobileSidebarOpen(true)}
                         type="button"
                     >
                         <Menu className="w-5 h-5" />
                     </button>
 
-                    <div className="hidden md:block" />
+                    <div className="hidden lg:block" />
 
                     <Link
                         href="/settings"

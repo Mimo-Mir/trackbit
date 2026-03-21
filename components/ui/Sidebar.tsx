@@ -82,7 +82,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
 
                     <button
                         aria-label="Close menu"
-                        className="md:hidden p-2 rounded-[2px] text-text-muted/80 hover:text-text-primary hover:bg-surface-700"
+                        className="lg:hidden p-2 rounded-[2px] text-text-muted/80 hover:text-text-primary hover:bg-surface-700"
                         onClick={onClose}
                         type="button"
                     >
@@ -128,7 +128,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
             {/* Mobile backdrop */}
             <div
                 className={cn(
-                    "fixed inset-0 z-40 bg-black/60 transition-opacity md:hidden",
+                    "fixed inset-0 z-40 bg-black/60 transition-opacity lg:hidden",
                     mobileOpen ? "opacity-100" : "pointer-events-none opacity-0"
                 )}
                 onClick={onClose}
@@ -137,7 +137,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
             {/* Mobile drawer */}
             <aside
                 className={cn(
-                    "fixed inset-y-0 left-0 z-50 w-[18rem] max-w-[88vw] flex flex-col bg-surface-900 border-r-2 border-surface-400/40 transition-transform md:hidden",
+                    "fixed inset-y-0 left-0 z-50 w-[18rem] max-w-[88vw] flex flex-col bg-surface-900 border-r-2 border-surface-400/40 transition-transform lg:hidden",
                     mobileOpen ? "translate-x-0" : "-translate-x-full"
                 )}
             >
@@ -145,7 +145,7 @@ export default function Sidebar({ mobileOpen = false, onClose }: SidebarProps) {
             </aside>
 
             {/* Desktop sidebar */}
-            <aside className="hidden md:flex w-64 shrink-0 h-full flex-col bg-surface-900 border-r-2 border-surface-400/40">
+            <aside className="hidden lg:flex w-64 shrink-0 h-full flex-col bg-surface-900 border-r-2 border-surface-400/40">
                 {renderNavContent()}
             </aside>
         </>
