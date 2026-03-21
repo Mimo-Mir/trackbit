@@ -41,8 +41,7 @@ export default function LoginPage() {
 
   const callbackError = (() => {
     const error = searchParams.get('error');
-    const 
-  reason = searchParams.get('reason');
+    const reason = searchParams.get('reason');
 
     const suffix = reason ? `: ${reason}` : '';
 
@@ -104,6 +103,9 @@ export default function LoginPage() {
 
       router.push('/dashboard');
       router.refresh();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unexpected login error';
+      setFormError(`LOGIN FAILED: ${message.toUpperCase()}`);
     } finally {
       setIsLoginLoading(false);
     }
@@ -125,6 +127,9 @@ export default function LoginPage() {
       if (error) {
         setFormError(normalizeAuthError(error.message));
       }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unexpected Google OAuth error';
+      setFormError(`GOOGLE LOGIN FAILED: ${message.toUpperCase()}`);
     } finally {
       setIsGoogleLoading(false);
     }
