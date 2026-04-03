@@ -29,7 +29,7 @@ Future apps should use their own schema names and follow the same pattern.
 
 ## Environment variables
 
-Use these in local .env.local and Netlify environment settings:
+Use these in local .env.local and Vercel environment settings:
 
 - NEXT_PUBLIC_SUPABASE_URL
 - NEXT_PUBLIC_SUPABASE_ANON_KEY

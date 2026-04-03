@@ -18,33 +18,33 @@ export default function BooksPage() {
     };
     const startEdit = (b: BookEntry) => { setEditingId(b.id); setForm({ title: b.title, author: b.author, totalPages: b.totalPages, currentPage: b.currentPage, status: b.status }); setShowForm(true); };
     return (
-        <div className="p-6 space-y-6 max-w-screen-xl mx-auto animate-fade-in bg-surface-900 min-h-screen">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-[2px] bg-brand-600 flex items-center justify-center shadow-glow"><BookMarked className="w-5 h-5 text-text-primary" /></div>
-                    <div><h1 className="font-display font-bold text-sm uppercase tracking-widest text-text-primary">Book Tracker</h1><p className="text-xs text-text-muted/70 mt-0.5">{books.length} books · {books.filter(b => b.status === 'Completed').length} completed</p></div>
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-screen-xl mx-auto animate-fade-in bg-surface-900 min-h-screen">
+            <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-[2px] bg-brand-600 flex items-center justify-center shadow-glow shrink-0"><BookMarked className="w-5 h-5 text-text-primary" /></div>
+                    <div className="min-w-0"><h1 className="font-display font-bold text-xs sm:text-sm uppercase tracking-widest text-text-primary truncate">Book Tracker</h1><p className="text-xs text-text-muted/70 mt-0.5">{books.length} books · {books.filter(b => b.status === 'Completed').length} done</p></div>
                 </div>
-                <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-text-primary rounded-[2px] text-sm font-medium hover:bg-brand-500 transition-none shadow-glow"><Plus className="w-4 h-4" /> Add Book</button>
+                <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-brand-600 text-text-primary rounded-[2px] text-xs sm:text-sm font-medium hover:bg-brand-500 transition-none shadow-glow shrink-0"><Plus className="w-4 h-4" /><span className="hidden sm:inline"> Add Book</span><span className="sm:hidden">Add</span></button>
             </div>
             {showForm && (
-                <Card className="p-6 bg-surface-800 border-brand-500/20 animate-fade-in">
+                <Card className="p-4 sm:p-6 bg-surface-800 border-brand-500/20 animate-fade-in">
                     <div className="flex items-center justify-between mb-4"><h3 className="text-sm font-bold text-text-primary">{editingId ? 'Edit' : 'New'} Book</h3><button onClick={resetForm} className="text-text-muted/60 hover:text-text-primary"><X className="w-4 h-4" /></button></div>
-                    <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-4">
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div><label className="block text-xs text-text-muted/70 mb-1">Title</label><input type="text" value={form.title} onChange={e => setForm({...form, title: e.target.value})} placeholder="Book title" className="w-full px-3 py-2 bg-surface-900 border-2 border-surface-400/50 rounded-[2px] text-sm text-text-primary placeholder:text-text-muted/50 focus:outline-none focus:border-brand-500/50" autoFocus /></div>
                         <div><label className="block text-xs text-text-muted/70 mb-1">Author</label><input type="text" value={form.author} onChange={e => setForm({...form, author: e.target.value})} placeholder="Author name" className="w-full px-3 py-2 bg-surface-900 border-2 border-surface-400/50 rounded-[2px] text-sm text-text-primary placeholder:text-text-muted/50 focus:outline-none focus:border-brand-500/50" /></div>
                         <div><label className="block text-xs text-text-muted/70 mb-1">Status</label><select value={form.status} onChange={e => setForm({...form, status: e.target.value as BookEntry['status']})} className="w-full px-3 py-2 bg-surface-900 border-2 border-surface-400/50 rounded-[2px] text-sm text-text-primary focus:outline-none focus:border-brand-500/50"><option>Want to Read</option><option>Reading</option><option>Completed</option></select></div>
                         <div><label className="block text-xs text-text-muted/70 mb-1">Total Pages</label><input type="number" min={1} value={form.totalPages} onChange={e => setForm({...form, totalPages: Number(e.target.value)})} className="w-full px-3 py-2 bg-surface-900 border-2 border-surface-400/50 rounded-[2px] text-sm text-text-primary focus:outline-none focus:border-brand-500/50" /></div>
                         <div><label className="block text-xs text-text-muted/70 mb-1">Current Page</label><input type="number" min={0} max={form.totalPages} value={form.currentPage} onChange={e => setForm({...form, currentPage: Number(e.target.value)})} className="w-full px-3 py-2 bg-surface-900 border-2 border-surface-400/50 rounded-[2px] text-sm text-text-primary focus:outline-none focus:border-brand-500/50" /></div>
-                        <div className="flex items-end"><button type="submit" className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-text-primary rounded-[2px] text-sm font-medium hover:bg-brand-500 transition-none"><Check className="w-4 h-4" /> {editingId ? 'Update' : 'Add'}</button></div>
+                        <div className="flex items-end"><button type="submit" className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-brand-600 text-text-primary rounded-[2px] text-sm font-medium hover:bg-brand-500 transition-none"><Check className="w-4 h-4" /> {editingId ? 'Update' : 'Add'}</button></div>
                     </form>
                 </Card>
             )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {books.map(book => (
-                    <Card key={book.id} className="p-5 bg-surface-800 border-surface-400/40 hover:border-brand-500/20 transition-all group">
+                    <Card key={book.id} className="p-4 sm:p-5 bg-surface-800 border-surface-400/40 hover:border-brand-500/20 transition-all group">
                         <div className="flex items-start justify-between mb-2">
-                            <div><h3 className="text-sm font-bold text-text-primary">{book.title}</h3><p className="text-xs text-text-muted/60">{book.author}</p></div>
-                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="min-w-0 mr-2"><h3 className="text-sm font-bold text-text-primary truncate">{book.title}</h3><p className="text-xs text-text-muted/60 truncate">{book.author}</p></div>
+                            <div className="flex gap-1 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                 <button onClick={() => startEdit(book)} className="p-1.5 rounded-[2px] hover:bg-surface-700 text-text-muted/60 hover:text-brand-400 transition-none"><Edit3 className="w-3.5 h-3.5" /></button>
                                 <button onClick={() => deleteBook(book.id)} className="p-1.5 rounded-[2px] hover:bg-surface-700 text-text-muted/60 hover:text-danger-400 transition-none"><Trash2 className="w-3.5 h-3.5" /></button>
                             </div>
