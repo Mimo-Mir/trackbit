@@ -70,19 +70,22 @@ const supabase = createTrackbitServiceClient();
 
 Workflow file: .github/workflows/supabase-keepalive.yml
 
-It runs every 4 days and executes a real PostgREST table query:
+It runs every 4 days and executes a keepalive check sequence:
 
-- GET /rest/v1/keepalive_ping?select=id&limit=1
-- Headers include apikey, Authorization bearer token, and Accept-Profile: trackbit
+- Primary: GET /rest/v1/keepalive_ping?select=id&limit=1
+- Fallback: GET /auth/v1/health if the primary check fails
+- Headers include apikey and Authorization bearer token
+- PostgREST request also includes Accept-Profile: trackbit
 
-Required GitHub secrets:
+Recommended GitHub Actions secret values:
 
 - SUPABASE_URL
-- SUPABASE_ANON_KEY
+- SUPABASE_SERVICE_ROLE_KEY
 
-Accepted fallback names (workflow supports either set):
+Supported fallback names (Secrets or Variables):
 
 - NEXT_PUBLIC_SUPABASE_URL
+- SUPABASE_ANON_KEY
 - NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 ## Retention rules implemented

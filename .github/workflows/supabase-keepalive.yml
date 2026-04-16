@@ -17,30 +17,69 @@ jobs:
     steps:
       - name: Ping trackbit keepalive table via PostgREST
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SECRET_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SECRET_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          VAR_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          VAR_NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          SECRET_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SECRET_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SECRET_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          VAR_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          VAR_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
-          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
-            echo "Missing required secrets. Set either SUPABASE_URL/SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_URL/NEXT_PUBLIC_SUPABASE_ANON_KEY in GitHub repository secrets."
+          set -euo pipefail
+
+          SUPABASE_URL="${SECRET_SUPABASE_URL:-${SECRET_NEXT_PUBLIC_SUPABASE_URL:-${VAR_SUPABASE_URL:-${VAR_NEXT_PUBLIC_SUPABASE_URL:-}}}}"
+          SUPABASE_KEY="${SECRET_SUPABASE_SERVICE_ROLE_KEY:-${SECRET_SUPABASE_ANON_KEY:-${SECRET_NEXT_PUBLIC_SUPABASE_ANON_KEY:-${VAR_SUPABASE_ANON_KEY:-${VAR_NEXT_PUBLIC_SUPABASE_ANON_KEY:-}}}}}"
+
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "Missing Supabase URL in GitHub Actions settings."
+            echo "Add one of: SUPABASE_URL or NEXT_PUBLIC_SUPABASE_URL (Secrets or Variables)."
             exit 1
           fi
 
-          endpoint="${SUPABASE_URL}/rest/v1/keepalive_ping?select=id&limit=1"
+          if [ -z "$SUPABASE_KEY" ]; then
+            echo "Missing Supabase API key in GitHub Actions secrets/variables."
+            echo "Recommended: set SUPABASE_SERVICE_ROLE_KEY in Secrets."
+            echo "Fallbacks: SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY (Secrets or Variables)."
+            exit 1
+          fi
+
+          endpoint="${SUPABASE_URL%/}/rest/v1/keepalive_ping?select=id&limit=1"
+          auth_health_endpoint="${SUPABASE_URL%/}/auth/v1/health"
 
           response=$(curl --silent --show-error --location --retry 2 --retry-delay 2 \
             --write-out "\n%{http_code}" \
-            --header "apikey: ${SUPABASE_ANON_KEY}" \
-            --header "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            --header "apikey: ${SUPABASE_KEY}" \
+            --header "Authorization: Bearer ${SUPABASE_KEY}" \
             --header "Accept-Profile: trackbit" \
             "$endpoint")
 
           status=$(echo "$response" | tail -n 1)
           body=$(echo "$response" | sed '$d')
 
-          if [ "$status" != "200" ]; then
-            echo "Keepalive ping failed with HTTP $status"
-            echo "$body"
+          if [ "$status" = "200" ]; then
+            echo "Supabase keepalive ping successful via PostgREST"
+            exit 0
+          fi
+
+          echo "PostgREST keepalive ping failed with HTTP $status; trying Auth health fallback..."
+          echo "$body"
+
+          auth_response=$(curl --silent --show-error --location --retry 2 --retry-delay 2 \
+            --write-out "\n%{http_code}" \
+            --header "apikey: ${SUPABASE_KEY}" \
+            --header "Authorization: Bearer ${SUPABASE_KEY}" \
+            "$auth_health_endpoint")
+
+          auth_status=$(echo "$auth_response" | tail -n 1)
+          auth_body=$(echo "$auth_response" | sed '$d')
+
+          if [ "$auth_status" != "200" ]; then
+            echo "Auth health fallback failed with HTTP $auth_status"
+            echo "Verify trackbit is in Exposed schemas and keepalive_ping exists in trackbit schema."
+            echo "$auth_body"
             exit 1
           fi
 
-          echo "Supabase keepalive ping successful"
+          echo "Supabase keepalive successful via Auth health fallback"
