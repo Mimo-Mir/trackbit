@@ -2,8 +2,8 @@ name: Supabase Keepalive
 
 on:
   schedule:
-    # Every 4 days at 04:23 UTC.
-    - cron: '23 4 */4 * *'
+    # Every day at 04:23 UTC.
+    - cron: '23 4 * * *'
   workflow_dispatch:
 
 permissions:
@@ -63,23 +63,7 @@ jobs:
             exit 0
           fi
 
-          echo "PostgREST keepalive ping failed with HTTP $status; trying Auth health fallback..."
+          echo "PostgREST keepalive ping failed with HTTP $status"
           echo "$body"
-
-          auth_response=$(curl --silent --show-error --location --retry 2 --retry-delay 2 \
-            --write-out "\n%{http_code}" \
-            --header "apikey: ${SUPABASE_KEY}" \
-            --header "Authorization: Bearer ${SUPABASE_KEY}" \
-            "$auth_health_endpoint")
-
-          auth_status=$(echo "$auth_response" | tail -n 1)
-          auth_body=$(echo "$auth_response" | sed '$d')
-
-          if [ "$auth_status" != "200" ]; then
-            echo "Auth health fallback failed with HTTP $auth_status"
-            echo "Verify trackbit is in Exposed schemas and keepalive_ping exists in trackbit schema."
-            echo "$auth_body"
-            exit 1
-          fi
-
-          echo "Supabase keepalive successful via Auth health fallback"
+          echo "Verify trackbit is in Exposed schemas and keepalive_ping exists in trackbit schema."
+          exit 1
